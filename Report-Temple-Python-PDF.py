@@ -34,7 +34,7 @@ buffer2.seek(0)
 plt.close()
 
 # Crear un archivo PDF con ReportLab
-pdf_file = r"C:\Users\carlo\Downloads/reporte_diseñado.pdf"
+pdf_file = r"C:\ruta"
 c = canvas.Canvas(pdf_file, pagesize=letter)
 width, height = letter
 
