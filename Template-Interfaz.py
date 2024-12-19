@@ -25,9 +25,9 @@ def aceptar():
         return
     
     # Aquí iría tu proceso
-    amistad = 5+5
+    
     try:
-        Proceso
+        #Proceso
         # Simular un error para mostrar un ejemplo
         raise ValueError("Texto ejemplo del error en el proceso.")
     except Exception as e:
@@ -48,7 +48,7 @@ ventana.geometry("600x400")
 ventana.resizable(False, False)
 
 # Cargar y redimensionar la imagen
-encabezado_original = Image.open(r"C:\Users\carlo\Downloads\encabezado.png")
+encabezado_original = Image.open(r"C:ruta/encabezado.png")
 encabezado_redimensionado = encabezado_original.resize((600, 100))  # Ajusta el tamaño (ancho, alto)
 encabezado = ImageTk.PhotoImage(encabezado_redimensionado)
 

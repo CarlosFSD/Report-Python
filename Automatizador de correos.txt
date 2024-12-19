@@ -1,0 +1,78 @@
+Sub EnviarTablaFiltradaCorreo()
+
+    Dim OutlookApp As Object
+    Dim MailItem As Object
+    Dim RangoFiltrado As Range
+    Dim Tabla As ListObject
+    Dim EmailBody As String
+    Dim Celda As Range
+    Dim Fila As Range
+
+    On Error GoTo ManejoErrores
+
+    ' Obtener la tabla "Tabla1" en la hoja activa
+    Set Tabla = ActiveSheet.ListObjects("Tabla1")
+    
+    ' Verificar si hay datos visibles en la tabla filtrada
+    On Error Resume Next
+    Set RangoFiltrado = Tabla.Range.SpecialCells(xlCellTypeVisible)
+    On Error GoTo 0
+    
+    If RangoFiltrado Is Nothing Then
+        MsgBox "No hay datos visibles en la tabla después del filtro.", vbExclamation
+        Exit Sub
+    End If
+    
+    ' Crear el contenido del correo con la tabla filtrada
+    EmailBody = "<html><body>"
+    EmailBody = EmailBody & "<p>Hola,</p>"
+    EmailBody = EmailBody & "<p>Adjunto encontrarás la cotización solicitada con los componentes seleccionados:</p>"
+    EmailBody = EmailBody & "<table border='1' style='border-collapse:collapse;'>"
+    
+    ' Agregar las cabeceras de la tabla al correo
+    For Each Celda In Tabla.HeaderRowRange
+        EmailBody = EmailBody & "<th style='padding:5px;'>" & Celda.Value & "</th>"
+    Next Celda
+    
+    ' Agregar las filas visibles de la tabla al correo
+    For Each Fila In RangoFiltrado.Rows
+        EmailBody = EmailBody & "<tr>"
+        For Each Celda In Fila.Cells
+            EmailBody = EmailBody & "<td style='padding:5px;'>" & Celda.Value & "</td>"
+        Next Celda
+        EmailBody = EmailBody & "</tr>"
+    Next Fila
+    
+    EmailBody = EmailBody & "</table>"
+    EmailBody = EmailBody & "<p>Saludos cordiales,</p>"
+    EmailBody = EmailBody & "</body></html>"
+    
+    ' Crear objeto de Outlook
+    On Error Resume Next
+    Set OutlookApp = CreateObject("Outlook.Application")
+    On Error GoTo 0
+    
+    If OutlookApp Is Nothing Then
+        MsgBox "Outlook no está disponible. Por favor, abre Outlook e inténtalo de nuevo.", vbCritical
+        Exit Sub
+    End If
+    
+    ' Crear y configurar el correo
+    Set MailItem = OutlookApp.CreateItem(0)
+    With MailItem
+        .To = "destinatario@ejemplo.com" ' Cambiar por el correo del destinatario
+        .Subject = "Cotización de componentes"
+        .HTMLBody = EmailBody
+        .Display ' Mostrar el correo para previsualizar antes de enviarlo
+    End With
+    
+    ' Limpiar objetos
+    Set MailItem = Nothing
+    Set OutlookApp = Nothing
+
+    MsgBox "El correo está listo para su revisión.", vbInformation
+    Exit Sub
+
+ManejoErrores:
+    MsgBox "Ocurrió un error: " & Err.Description, vbCritical
+End Sub
